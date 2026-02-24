@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Cave Du Vignoble | Maison de Prestige</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --gold: #c5a059; 
+            --gold-bright: #e9d1a1;
+            --wine: #2c0404; 
+            --dark: #0a0a0a; 
+            --glass: rgba(255, 255, 255, 0.03);
+            --white: #ffffff; 
+        }
+
+        * { box-sizing: border-box; scroll-behavior: smooth; }
+
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: var(--dark);
+            /* Fond texturé élégant */
+            background-image: 
+                linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)),
+                url('https://www.transparenttextures.com/patterns/dark-leather.png');
+            color: var(--white); 
+            margin: 0; 
+        }
+
+        /* Barre de Navigation */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+            z-index: 1000; border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+        }
+        .nav-links a {
+            color: var(--white); text-decoration: none; margin-left: 30px;
+            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;
+            transition: 0.3s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+
+        /* Header Somptueux */
+        header { 
+            height: 80vh; 
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(10,10,10,1)), 
+                        url('https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
+        }
+
+        header h1 { 
+            font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 10vw, 5rem); 
+            color: var(--gold); margin: 0; text-transform: uppercase; letter-spacing: 15px;
+            font-weight: 400; font-style: italic;
+        }
+
+        .subtitle { letter-spacing: 5px; color: var(--white); opacity: 0.8; margin-top: 10px; font-weight: 200; }
+
+        /* Sections */
+        section { padding: 100px 20px; max-width: 1200px; margin: auto; }
+        h2.section-title { 
+            text-align: center; font-family: 'Playfair Display', serif; font-size: 2.5rem;
+            color: var(--gold); margin-bottom: 60px; letter-spacing: 3px;
+        }
+
+        /* Onglets */
+        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 50px; flex-wrap: wrap; }
+        .tab-btn { 
+            background: none; border: 1px solid rgba(197, 160, 89, 0.3); color: var(--gold); 
+            padding: 12px 25px; cursor: pointer; border-radius: 0; transition: 0.4s;
+            text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px;
+        }
+        .tab-btn.active { background: var(--gold); color: black; border-color: var(--gold); }
+
+        /* Grille de produits */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .card { 
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.05); 
+            padding: 40px; text-align: center; transition: 0.5s; position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.1), transparent);
+            transition: 0.5s;
+        }
+        .card:hover::before { left: 100%; }
+        .card:hover { border-color: var(--gold); transform: translateY(-5px); background: rgba(255,255,255,0.06); }
+
+        .card h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 10px; color: var(--gold-bright); }
+        .price { font-family: 'Playfair Display', serif; font-size: 2rem; color: #fff; margin: 20px 0; }
+
+        /* Quantité et Bouton */
+        .qty-box { margin-bottom: 25px; display: flex; justify-content: center; align-items: center; gap: 15px; }
+        .qty-input { 
+            background: none; border: 1px solid var(--gold); color: white; width: 50px; 
+            text-align: center; padding: 5px; font-family: 'Montserrat';
+        }
+        .add-btn { 
+            background: var(--gold); color: black; border: none; padding: 15px 30px; 
+            font-weight: bold; cursor: pointer; width: 100%; letter-spacing: 2px; transition: 0.3s;
+        }
+        .add-btn:hover { background: var(--gold-bright); }
+
+        /* Section À Propos */
+        #about { background: rgba(255,255,255,0.02); border-radius: 5px; padding: 80px 40px; margin-top: 50px; }
+        .about-content { max-width: 800px; margin: auto; text-align: center; line-height: 2; font-weight: 300; }
+
+        /* Panier Modal */
+        #modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.98); display: none; justify-content: center; align-items: center; z-index: 2000; 
+        }
+        .modal-content { 
+            background: var(--dark); padding: 50px; width: 90%; max-width: 600px; border: 1px solid var(--gold); 
+        }
+
+        #cart-trigger { 
+            position: fixed; bottom: 40px; right: 40px; background: var(--gold); color: black; 
+            padding: 20px 30px; font-weight: bold; cursor: pointer; border: none; z-index: 900;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        footer { padding: 50px; text-align: center; border-top: 1px solid rgba(197, 160, 89, 0.1); margin-top: 100px; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div style="font-family: 'Playfair Display'; color: var(--gold); font-size: 1.2rem; font-weight: bold;">C.V</div>
+    <div class="nav-links">
+        <a href="#">Accueil</a>
+        <a href="#boutique">Boutique</a>
+        <a href="#about">À Propos</a>
+    </div>
+</nav>
+
+<header>
+    <h1>La Cave Du Vignoble</h1>
+    <div class="subtitle">DEPUIS 1988 — SÉLECTION RARE</div>
+</header>
+
+<section id="boutique">
+    <h2 class="section-title">Notre Collection</h2>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="filterCategory('fraiches', this)">Softs</button>
+        <button class="tab-btn" onclick="filterCategory('rouge', this)">Vins Rouges</button>
+        <button class="tab-btn" onclick="filterCategory('blanc', this)">Vins Blancs</button>
+        <button class="tab-btn" onclick="filterCategory('champagne', this)">Champagnes</button>
+    </div>
+
+    <div class="grid" id="product-list"></div>
+</section>
+
+<section id="about">
+    <h2 class="section-title">Notre Histoire</h2>
+    <div class="about-content">
+        <p>Bienvenue à <strong>La Cave Du Vignoble</strong>. Notre maison s'engage depuis des décennies à dénicher les crus les plus exceptionnels pour les palais les plus exigeants.</p>
+        <p>Chaque bouteille présente dans notre catalogue a été goûtée, sélectionnée et conservée dans des conditions optimales. Nous croyons que le vin n'est pas qu'une boisson, c'est un patrimoine liquide, une histoire de terroir et d'hommes.</p>
+        <p style="color: var(--gold); font-family: 'Playfair Display'; font-style: italic; font-size: 1.2rem; margin-top: 30px;">"L'excellence n'est pas un acte, c'est une habitude."</p>
+    </div>
+</section>
+
+<button id="cart-trigger" onclick="toggleModal(true)" style="display:none;">PANIER (<span id="cart-count">0</span>)</button>
+
+<div id="modal-overlay">
+    <div class="modal-content">
+        <h2 style="font-family: 'Playfair Display'; color: var(--gold); margin-top: 0;">Ma Sélection</h2>
+        <div id="cart-items" style="margin-bottom: 30px; border-top: 1px solid rgba(197, 160, 89, 0.2); padding-top: 20px;"></div>
+        <div style="text-align: right; font-size: 1.5rem; margin-bottom: 30px;">TOTAL : <span id="cart-total" style="color: var(--gold);">0</span> $</div>
+        
+        <form action="https://formspree.io/f/xreaonyl" method="POST">
+            <input type="text" name="Nom" class="form-input" placeholder="Nom complet" required>
+            <input type="tel" name="Tel" class="form-input" placeholder="Téléphone" required>
+            <input type="hidden" name="Detail" id="hidden-detail">
+            <input type="hidden" name="Prix" id="hidden-total">
+            <button type="submit" class="submit-btn">PASSER LA COMMANDE</button>
+            <button type="button" onclick="toggleModal(false)" style="background:none; border:none; color:#555; width:100%; margin-top:20px; cursor:pointer;">RETOUR</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <p style="opacity: 0.5; font-size: 0.8rem;">&copy; 2026 LA CAVE DU VIGNOBLE. L'ABUS D'ALCOOL EST DANGEREUX POUR LA SANTÉ.</p>
+    <button onclick="checkAdmin()" style="background:none; border:none; color:#222; cursor:pointer; font-size:0.6rem; margin-top:20px;">ADMINISTRATION</button>
+</footer>
+
+<script>
+    const products = [
+        { id: 0, cat: 'fraiches', name: "Jus d'orange pressé", price: 7 },
+        { id: 1, cat: 'fraiches', name: "Bière artisanale", price: 12 },
+        { id: 2, cat: 'rouge', name: "Grenacha", price: 25 },
+        { id: 3, cat: 'rouge', name: "Merlot", price: 40 },
+        { id: 4, cat: 'rouge', name: "Cabernet Sauvignon", price: 50 },
+        { id: 5, cat: 'rouge', name: "Pinot Noir", price: 55 },
+        { id: 6, cat: 'rouge', name: "Bordelais", price: 60 },
+        { id: 7, cat: 'rouge', name: "Côte du Rhône", price: 65 },
+        { id: 8, cat: 'blanc', name: "Chardonnay", price: 30 },
+        { id: 9, cat: 'blanc', name: "Sauvignon Blanc", price: 35 },
+        { id: 10, cat: 'blanc', name: "Blanc du vignoble", price: 100 },
+        { id: 11, cat: 'champagne', name: "Champagne de Prestige", price: 1000 }
+    ];
+
+    let cart = {};
+    let currentCat = 'fraiches';
+
+    function render() {
+        const list = document.getElementById('product-list');
+        list.innerHTML = products.filter(p => p.cat === currentCat).map(p => `
+            <div class="card">
+                <h3>${p.name}</h3>
+                <div class="price">${p.price} $</div>
+                <div class="qty-box">
+                    <input type="number" id="input-${p.id}" class="qty-input" value="1" min="1">
+                </div>
+                <button class="add-btn" onclick="addToCart(${p.id})">AJOUTER AU PANIER</button>
+            </div>
+        `).join('');
+    }
+
+    function filterCategory(cat, btn) {
+        currentCat = cat;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+    }
+
+    function addToCart(id) {
+        const p = products.find(prod => prod.id === id);
+        const q = parseInt(document.getElementById(`input-${id}`).value);
+        if (!cart[p.name]) cart[p.name] = { price: p.price, qty: 0 };
+        cart[p.name].qty += q; 
+        document.getElementById('cart-trigger').style.display = 'block';
+        updateCart();
+    }
+
+    function updateCart() {
+        let t = 0, c = 0, h = "", d = "";
+        for (let n in cart) {
+            t += cart[n].price * cart[n].qty;
+            c += cart[n].qty;
+            h += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <span>${cart[n].qty}x ${n}</span><span>${cart[n].price * cart[n].qty}$</span>
+                  </div>`;
+            d += `${n}(x${cart[n].qty}) `;
+        }
+        document.getElementById('cart-count').innerText = c;
+        document.getElementById('cart-total').innerText = t;
+        document.getElementById('cart-items').innerHTML = h;
+        document.getElementById('hidden-total').value = t + " $";
+        document.getElementById('hidden-detail').value = d;
+    }
+
+    function toggleModal(s) { document.getElementById('modal-overlay').style.display = s ? 'flex' : 'none'; }
+
+    function checkAdmin() {
+        if (prompt("Code Admin :") === "1234") {
+            window.location.href = "https://formspree.io/forms/xreaonyl/submissions";
+        }
+    }
+
+    render();
+</script>
+</body>
+</html>
