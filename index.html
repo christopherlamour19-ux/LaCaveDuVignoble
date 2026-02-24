@@ -3,160 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Cave Du Vignoble - Vins Fins</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>La Cave Du Vignoble | Boutique de Prestige</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #d4af37; --wine: #5c0a0a; --dark: #0f0f0f; --glass: rgba(255, 255, 255, 0.05); }
-        body { font-family: 'Montserrat', sans-serif; background: var(--dark); color: #e0e0e0; margin: 0; line-height: 1.6; }
+        :root { 
+            --gold: #d4af37; 
+            --gold-light: #f1d592;
+            --wine: #4a0404; 
+            --dark-bg: #050505; 
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --white: #ffffff; 
+        }
+
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background: var(--dark-bg); 
+            color: var(--white); 
+            margin: 0; 
+            padding-bottom: 60px;
+            line-height: 1.6;
+        }
+
+        header { 
+            height: 40vh; 
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1506377247377-2a5b3b0ca7df?q=80&w=1470&auto=format&fit=crop');
+            background-size: cover; 
+            background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-bottom: 1px solid var(--gold);
+        }
+
+        header h1 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: clamp(2rem, 8vw, 3.5rem); 
+            color: var(--gold); 
+            margin: 0; text-transform: uppercase; letter-spacing: 8px; text-align: center;
+        }
+
+        .tabs { 
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; 
+            margin: -25px 0 50px 0; padding: 0 20px; position: sticky; top: 20px; z-index: 10;
+        }
+
+        .tab-btn { 
+            background: rgba(10, 10, 10, 0.95); border: 1px solid var(--gold); color: var(--gold); 
+            padding: 10px 20px; cursor: pointer; font-weight: 600; transition: all 0.4s ease; 
+            border-radius: 5px; backdrop-filter: blur(10px); text-transform: uppercase; font-size: 0.8rem;
+        }
+
+        .tab-btn.active { background: var(--gold); color: #000; }
+
+        .container { max-width: 1100px; margin: auto; padding: 0 25px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
         
-        /* Header & Hero */
-        header { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1506377247377-2a5b3b0ca7df?q=80&w=1470&auto=format&fit=crop');
-                 background-size: cover; background-position: center; height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 2px solid var(--gold); }
-        h1 { font-family: 'Playfair Display', serif; font-size: 4rem; color: var(--gold); margin: 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
-        .subtitle { font-style: italic; font-size: 1.2rem; color: #fff; letter-spacing: 2px; }
+        .card { 
+            background: var(--card-bg); border: 1px solid rgba(212, 175, 55, 0.2); 
+            border-radius: 10px; padding: 35px 25px; text-align: center; transition: all 0.3s ease; 
+        }
 
-        .container { max-width: 1200px; margin: auto; padding: 40px 20px; }
+        .card:hover { border-color: var(--gold); background: rgba(255, 255, 255, 0.07); }
 
-        /* Grille de Produits */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        .card { background: var(--glass); border: 1px solid #333; border-radius: 20px; padding: 25px; text-align: center; transition: 0.4s ease; position: relative; overflow: hidden; }
-        .card:hover { border-color: var(--gold); transform: translateY(-5px); background: rgba(255,255,255,0.08); }
+        .card h3 { font-family: 'Playfair Display', serif; color: var(--gold-light); font-size: 1.4rem; margin: 0 0 10px 0; }
+        .price { font-size: 1.6rem; margin: 10px 0; color: var(--white); font-weight: 300; }
+
+        .qty-box { 
+            display: flex; justify-content: center; align-items: center; gap: 5px; 
+            margin: 20px auto; background: rgba(255,255,255,0.05); width: fit-content;
+            padding: 5px 10px; border-radius: 5px;
+        }
+
+        .qty-btn { background: none; border: none; color: var(--gold); font-size: 1.2rem; cursor: pointer; padding: 0 10px; }
         
-        .stock-badge { position: absolute; top: 15px; right: 15px; background: var(--wine); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .card img { width: 100%; height: 280px; object-fit: contain; margin-bottom: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
-        .card h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold); margin: 10px 0; }
-        .price { font-size: 1.8rem; font-weight: 600; color: #fff; margin: 15px 0; }
+        .qty-input {
+            background: none; border: 1px solid rgba(212, 175, 55, 0.3); color: white;
+            width: 60px; text-align: center; font-size: 1rem; font-weight: bold;
+            border-radius: 3px; padding: 5px 0;
+        }
 
-        /* Contrôles Quantité */
-        .qty-selector { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .qty-btn { background: none; border: 1px solid var(--gold); color: var(--gold); width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; transition: 0.3s; }
-        .qty-btn:hover { background: var(--gold); color: black; }
-        .qty-val { font-size: 1.2rem; min-width: 30px; }
+        .add-btn { 
+            background: none; color: var(--gold); border: 1px solid var(--gold); 
+            padding: 12px; border-radius: 5px; font-weight: 700; cursor: pointer; 
+            width: 100%; letter-spacing: 1px; transition: 0.3s; text-transform: uppercase;
+        }
 
-        .add-btn { background: var(--gold); color: black; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; width: 100%; }
-        .add-btn:hover:not(:disabled) { background: #fff; box-shadow: 0 0 20px var(--gold); }
-        .add-btn:disabled { background: #444; color: #888; cursor: not-allowed; }
+        .add-btn:hover { background: var(--gold); color: #000; }
 
-        /* Panier */
-        .checkout-section { background: #1a1a1a; padding: 40px; border-radius: 25px; margin-top: 60px; border: 1px solid var(--gold); }
-        .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333; }
-        .total-display { font-size: 2.2rem; font-family: 'Playfair Display'; color: var(--gold); text-align: right; margin: 25px 0; }
+        #cart-trigger { 
+            position: fixed; bottom: 30px; right: 30px; background: var(--wine); color: white; 
+            padding: 15px 25px; border-radius: 5px; cursor: pointer; border: 1px solid var(--gold); z-index: 100;
+        }
+
+        #modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(10px);
+        }
+        .modal-content { 
+            background: #0f0f0f; padding: 40px; border-radius: 10px; width: 90%; max-width: 500px; border: 1px solid var(--gold); 
+        }
         
-        input { background: #222; border: 1px solid #444; color: white; padding: 15px; border-radius: 10px; width: 100%; box-sizing: border-box; font-size: 1rem; margin-bottom: 20px; }
-        .confirm-btn { background: var(--wine); color: white; border: none; padding: 20px; width: 100%; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .confirm-btn:hover { background: #8e0f0f; }
+        .form-input { width: 100%; padding: 15px; margin: 12px 0; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 5px; box-sizing: border-box; }
+
+        .submit-btn { 
+            background: var(--gold); color: black; border: none; padding: 18px; width: 100%; font-weight: 700; cursor: pointer; border-radius: 5px; text-transform: uppercase;
+        }
+
+        footer { margin-top: 80px; padding: 40px; text-align: center; }
+        .admin-link { background: none; border: none; color: #1a1a1a; cursor: pointer; font-size: 0.6rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>La Cave Du Vignoble</h1>
-    <p class="subtitle">DÉCOUVREZ L'ART DU VIN</p>
 </header>
 
+<div class="tabs">
+    <button class="tab-btn active" onclick="filterCategory('fraiches', this)">Boissons Fraîches</button>
+    <button class="tab-btn" onclick="filterCategory('rouge', this)">Vins Rouges</button>
+    <button class="tab-btn" onclick="filterCategory('blanc', this)">Vins Blancs</button>
+    <button class="tab-btn" onclick="filterCategory('champagne', this)">Champagne</button>
+</div>
+
 <div class="container">
-    <div class="grid" id="product-grid">
-        </div>
+    <div class="grid" id="product-list"></div>
+</div>
 
-    <div class="checkout-section">
-        <h2 style="font-family: 'Playfair Display'; font-size: 2rem;">Votre Bon de Commande</h2>
-        <div id="cart-content">Le panier est vide.</div>
-        <div class="total-display">Total: <span id="grand-total">0</span> €</div>
+<button id="cart-trigger" onclick="toggleModal(true)" style="display:none;">🛒 PANIER (<span id="cart-count">0</span>)</button>
 
-        <form action="https://formspree.io/f/VOTRE_ID" method="POST" id="order-form">
-            <input type="text" name="Client" placeholder="Nom du Client ou de la Société" required>
-            <input type="hidden" name="Commande_Detaillee" id="form-detail">
-            <input type="hidden" name="Total_A_Payer" id="form-total">
-            <button type="submit" class="confirm-btn" id="submit-order" disabled>PASSER LA COMMANDE</button>
+<div id="modal-overlay">
+    <div class="modal-content">
+        <h2 style="color: var(--gold); font-family: 'Playfair Display'; margin-top:0;">Votre Sélection</h2>
+        <div id="cart-items" style="max-height: 250px; overflow-y: auto; margin-bottom: 25px; border-top: 1px solid #222; padding-top: 15px;"></div>
+        <h3 style="text-align: right;">TOTAL : <span id="cart-total" style="color: var(--gold);">0</span> $</h3>
+        
+        <form action="https://formspree.io/f/VOTRE_ID" method="POST">
+            <input type="text" name="Client" class="form-input" placeholder="Nom du Client / Société" required>
+            <input type="tel" name="Telephone" class="form-input" placeholder="Téléphone" required>
+            <input type="hidden" name="Commande" id="hidden-detail">
+            <input type="hidden" name="Total" id="hidden-total">
+            <button type="submit" class="submit-btn">VALIDER LA COMMANDE</button>
+            <button type="button" onclick="toggleModal(false)" style="background:none; border:none; color:#777; width:100%; margin-top:15px; cursor:pointer;">Fermer</button>
         </form>
     </div>
 </div>
 
+<footer>
+    <button class="admin-link" onclick="checkAdmin()">ACCÈS ADMINISTRATION</button>
+</footer>
+
 <script>
-    // Configuration des produits
     const products = [
-        { id: 1, name: "Château Margaux 2015", price: 120, stock: 12, img: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=500&auto=format" },
-        { id: 2, name: "Sancerre Blanc Prestige", price: 45, stock: 24, img: "https://images.unsplash.com/photo-1553184658-45e0883ee0a7?w=500&auto=format" },
-        { id: 3, name: "Domaine de la Romanée", price: 250, stock: 5, img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=500&auto=format" }
+        { id: 0, cat: 'fraiches', name: "Jus d'orange pressé", price: 7 },
+        { id: 1, cat: 'fraiches', name: "Bière artisanale", price: 12 },
+        { id: 2, cat: 'rouge', name: "Grenacha", price: 25 },
+        { id: 3, cat: 'rouge', name: "Merlot", price: 40 },
+        { id: 4, cat: 'rouge', name: "Cabernet Sauvignon", price: 50 },
+        { id: 5, cat: 'rouge', name: "Pinot Noir", price: 55 },
+        { id: 6, cat: 'rouge', name: "Bordelais", price: 60 },
+        { id: 7, cat: 'rouge', name: "Côte du Rhône", price: 65 },
+        { id: 8, cat: 'blanc', name: "Chardonnay", price: 30 },
+        { id: 9, cat: 'blanc', name: "Sauvignon Blanc", price: 35 },
+        { id: 10, cat: 'blanc', name: "Blanc du vignoble", price: 100 },
+        { id: 11, cat: 'champagne', name: "Champagne de Prestige", price: 1000 }
     ];
 
-    let cart = [];
+    let cart = {};
+    let currentCat = 'fraiches';
 
-    // Afficher les produits
-    function renderProducts() {
-        const grid = document.getElementById('product-grid');
-        grid.innerHTML = products.map(p => `
-            <div class="card">
-                <div class="stock-badge">Stock: <span id="stock-${p.id}">${p.stock}</span></div>
-                <img src="${p.img}" alt="${p.name}">
-                <h3>${p.name}</h3>
-                <div class="price">${p.price} €</div>
-                <div class="qty-selector">
-                    <button class="qty-btn" onclick="changeQty(${p.id}, -1)">-</button>
-                    <span class="qty-val" id="qty-val-${p.id}">1</span>
-                    <button class="qty-btn" onclick="changeQty(${p.id}, 1)">+</button>
+    function render() {
+        const list = document.getElementById('product-list');
+        list.innerHTML = products.filter(p => p.cat === currentCat).map(p => {
+            return `
+                <div class="card">
+                    <h3>${p.name}</h3>
+                    <div class="price">${p.price} $</div>
+                    <div class="qty-box">
+                        <button class="qty-btn" onclick="changeQty(${p.id}, -1)">-</button>
+                        <input type="number" id="input-${p.id}" class="qty-input" value="1" min="1" onchange="validateInput(${p.id})">
+                        <button class="qty-btn" onclick="changeQty(${p.id}, 1)">+</button>
+                    </div>
+                    <button class="add-btn" onclick="addToCart(${p.id})">AJOUTER AU PANIER</button>
                 </div>
-                <button class="add-btn" id="btn-${p.id}" onclick="addToCart(${p.id})" ${p.stock <= 0 ? 'disabled' : ''}>
-                    ${p.stock > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
-                </button>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+    }
+
+    function filterCategory(cat, btn) {
+        currentCat = cat;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
     }
 
     function changeQty(id, delta) {
-        const span = document.getElementById(`qty-val-${id}`);
-        let current = parseInt(span.innerText);
-        const product = products.find(p => p.id === id);
-        if (current + delta >= 1 && current + delta <= product.stock) {
-            span.innerText = current + delta;
+        const input = document.getElementById(`input-${id}`);
+        let val = parseInt(input.value) + delta;
+        if (val >= 1) {
+            input.value = val;
         }
+    }
+
+    function validateInput(id) {
+        const input = document.getElementById(`input-${id}`);
+        let val = parseInt(input.value);
+        if (isNaN(val) || val < 1) input.value = 1;
     }
 
     function addToCart(id) {
-        const product = products.find(p => p.id === id);
-        const qtySpan = document.getElementById(`qty-val-${id}`);
-        const qtyToAdd = parseInt(qtySpan.innerText);
-
-        if (product.stock >= qtyToAdd) {
-            const existing = cart.find(item => item.id === id);
-            if (existing) {
-                existing.qty += qtyToAdd;
-            } else {
-                cart.push({ ...product, qty: qtyToAdd });
-            }
-            product.stock -= qtyToAdd;
-            updateUI();
-        }
-    }
-
-    function updateUI() {
-        renderProducts();
-        const cartDiv = document.getElementById('cart-content');
-        const totalSpan = document.getElementById('grand-total');
-        const submitBtn = document.getElementById('submit-order');
+        const p = products.find(prod => prod.id === id);
+        const input = document.getElementById(`input-${id}`);
+        const q = parseInt(input.value);
         
-        if (cart.length === 0) {
-            cartDiv.innerHTML = "Le panier est vide.";
-            submitBtn.disabled = true;
+        if (!cart[p.name]) cart[p.name] = { price: p.price, qty: 0 };
+        cart[p.name].qty += q; 
+        
+        document.getElementById('cart-trigger').style.display = 'block';
+        updateCart(); 
+        render();
+    }
+
+    function updateCart() {
+        let t = 0, c = 0, h = "", d = "";
+        for (let n in cart) {
+            t += cart[n].price * cart[n].qty;
+            c += cart[n].qty;
+            h += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #222;"><span>${cart[n].qty}x ${n}</span><span>${cart[n].price * cart[n].qty}$</span></div>`;
+            d += `${n}(x${cart[n].qty}) `;
+        }
+        document.getElementById('cart-count').innerText = c;
+        document.getElementById('cart-total').innerText = t;
+        document.getElementById('cart-items').innerHTML = h;
+        document.getElementById('hidden-total').value = t + " $";
+        document.getElementById('hidden-detail').value = d;
+    }
+
+    function toggleModal(s) { document.getElementById('modal-overlay').style.display = s ? 'flex' : 'none'; }
+
+    function checkAdmin() {
+        const mdp = prompt("Mot de passe administrateur :");
+        if (mdp === "1234") {
+            window.location.href = "https://formspree.io/forms/VOTRE_ID/submissions";
         } else {
-            let total = 0;
-            cartDiv.innerHTML = cart.map(item => {
-                total += item.price * item.qty;
-                return `<div class="cart-item">
-                    <span>${item.name} (x${item.qty})</span>
-                    <span>${item.price * item.qty} €</span>
-                </div>`;
-            }).join('');
-            
-            totalSpan.innerText = total;
-            document.getElementById('form-total').value = total + " €";
-            document.getElementById('form-detail').value = cart.map(i => `${i.name} x${i.qty}`).join(' / ');
-            submitBtn.disabled = false;
+            alert("Accès refusé.");
         }
     }
 
-    renderProducts();
+    render();
 </script>
-
 </body>
 </html>
