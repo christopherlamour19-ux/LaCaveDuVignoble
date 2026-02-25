@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Cave Du Vignoble | Prestige</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;900&family=Montserrat:wght@100;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #c5a059; --gold-light: #f1e2af; --black: #050505; }
+        * { cursor: none !important; box-sizing: border-box; }
+        body { background: var(--black); color: white; margin: 0; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+        
+        /* CURSEUR */
+        #cursor { position: fixed; width: 8px; height: 8px; background: white; border-radius: 50%; pointer-events: none; z-index: 10000; mix-blend-mode: difference; }
+        #cursor-ring { position: fixed; width: 35px; height: 35px; border: 1px solid var(--gold); border-radius: 50%; pointer-events: none; z-index: 9999; transition: all 0.1s ease-out; }
+
+        /* ANIMATIONS */
+        @keyframes revealLaCave {
+            0% { opacity: 0; letter-spacing: -15px; filter: blur(12px); transform: scale(0.95); }
+            100% { opacity: 1; letter-spacing: 20px; filter: blur(0); transform: scale(1); }
+        }
+        @keyframes fadeInSubtitle { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeNav { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+        /* NAVIGATION */
+        nav { 
+            position: fixed; top: 0; width: 100%; padding: 30px 60px; 
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000; 
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+            animation: fadeNav 1.5s ease forwards 1s; opacity: 0;
+        }
+        .logo-nav { font-family: 'Cinzel Decorative'; color: var(--gold); letter-spacing: 5px; font-weight: 900; }
+        .nav-links { display: flex; gap: 40px; }
+        .nav-link { color: white; text-decoration: none; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; transition: 0.3s; opacity: 0.6; cursor: pointer; }
+        .nav-link:hover, .nav-link.active { opacity: 1; color: var(--gold); }
+
+        .page-section { display: none; padding-top: 100px; min-height: 100vh; }
+        .page-section.active { display: block; }
+
+        header { height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .hero-title { font-family: 'Cinzel Decorative'; font-size: clamp(3rem, 10vw, 6rem); text-transform: uppercase; animation: revealLaCave 2.5s cubic-bezier(0.19, 1, 0.22, 1) forwards; margin: 0; }
+        .hero-subtitle { letter-spacing: 12px; color: var(--gold); font-size: 0.7rem; animation: fadeInSubtitle 1.5s ease forwards 1.2s; opacity: 0; }
+
+        /* BOUTIQUE & GRILLE */
+        .container { padding: 40px 10% 100px; animation: fadeNav 1s ease forwards 1.5s; opacity: 0; }
+        .tabs { display: flex; justify-content: center; gap: 30px; margin-bottom: 60px; flex-wrap: wrap; }
+        .tab-btn { background: none; border: none; color: #444; font-family: 'Cinzel Decorative'; cursor: pointer; padding: 10px; transition: 0.4s; letter-spacing: 2px; }
+        .tab-btn.active { color: var(--gold); border-bottom: 1px solid var(--gold); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
+        .produit-card { background: rgba(255,255,255,0.01); border: 1px solid rgba(197,160,89,0.05); padding: 50px 30px; text-align: center; transition: 0.4s; }
+        .produit-card:hover { border-color: rgba(197,160,89,0.2); background: rgba(197,160,89,0.03); }
+
+        /* INPUTS & BOUTONS */
+        .qty-selector { display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(197,160,89,0.3); margin-bottom: 25px; background: rgba(0,0,0,0.2); }
+        .btn-qty { background: transparent; border: none; color: var(--gold); width: 35px; height: 35px; cursor: pointer; font-size: 1.2rem; }
+        .qty-input { background: transparent; border: none; color: white; width: 50px; text-align: center; outline: none; }
+        .btn-ajouter { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 15px 20px; width: 100%; font-family: 'Cinzel Decorative'; font-size: 0.75rem; letter-spacing: 4px; cursor: pointer; transition: 0.4s; text-transform: uppercase; }
+        .btn-ajouter:hover { background: var(--gold); color: black; }
+
+        /* SECTION BÉNÉFICES - VERROU */
+        #auth-overlay { 
+            position: fixed; inset: 0; background: var(--black); z-index: 2000; 
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .auth-card { text-align: center; padding: 40px; border: 1px solid var(--gold); max-width: 400px; width: 90%; background: #080808; }
+        .auth-input { 
+            width: 100%; background: none; border: 1px solid #222; color: white; 
+            padding: 15px; margin: 20px 0; outline: none; text-align: center; letter-spacing: 5px;
+        }
+
+        /* TABLEAU COMPTABILITÉ */
+        .compta-table { width: 100%; border-collapse: collapse; font-family: 'Montserrat'; color: #eee; margin-top: 30px; }
+        .compta-table th { border-bottom: 2px solid var(--gold); color: var(--gold); text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; padding: 20px; text-align: left; }
+        .compta-table td { padding: 20px; border-bottom: 1px solid rgba(197,160,89,0.1); font-weight: 300; }
+        .compta-table tr:hover { background: rgba(197,160,89,0.03); }
+
+        /* PANIER & MODAL */
+        #panier-trigger { position: fixed; bottom: 40px; right: 40px; height: 70px; padding: 0 25px; background: white; border-radius: 35px; display: none; align-items: center; gap: 12px; color: black; font-weight: 900; font-family: 'Cinzel Decorative'; border: none; z-index: 5000; }
+        .badge { background: var(--gold); width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; }
+        #modal-panier { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(15px); }
+        .modal-inner { border: 1px solid var(--gold); padding: 40px; width: 95%; max-width: 500px; background: var(--black); }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #1a1a1a; }
+        .fly-spark { position: fixed; width: 12px; height: 12px; background: var(--gold); border-radius: 50%; z-index: 10000; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav>
+    <div class="logo-nav">LA CAVE</div>
+    <div class="nav-links">
+        <a class="nav-link active" onclick="showPage('boutique', this)">Boutique</a>
+        <a class="nav-link" onclick="showPage('propos', this)">L'Héritage</a>
+        <a class="nav-link" onclick="checkAuth(this)">Bénéfices</a>
+    </div>
+</nav>
+
+<div id="section-boutique" class="page-section active">
+    <header>
+        <p class="hero-subtitle">SÉLECTION PRIVÉE</p>
+        <h1 class="hero-title">La Cave</h1>
+    </header>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="filter('fraiches', this)">SOFTS</button>
+            <button class="tab-btn" onclick="filter('rouge', this)">ROUGES</button>
+            <button class="tab-btn" onclick="filter('blanc', this)">BLANCS</button>
+            <button class="tab-btn" onclick="filter('champagne', this)">CHAMPAGNES</button>
+        </div>
+        <div class="grid" id="main-grid"></div>
+    </div>
+</div>
+
+<div id="section-propos" class="page-section">
+    <div style="max-width:700px; margin: 150px auto; text-align: center; padding: 0 20px;">
+        <h2 style="font-family:'Cinzel Decorative'; color:var(--gold); font-size:2rem; letter-spacing:5px;">L'Héritage Marlowe</h2>
+        <div style="width:40px; height:1px; background:var(--gold); margin: 30px auto;"></div>
+        <p style="line-height:2.2; color:#888; font-weight: 300;">Depuis 1988, le Vignoble du Nord de Los Santos s'impose comme une référence absolue. Niché entre les montagnes et l'océan, notre domaine produit des crus d'exception destinés aux tables les plus prestigieuses de San Andreas.</p>
+    </div>
+</div>
+
+<div id="section-benefice" class="page-section">
+    <div class="container">
+        <header style="height: auto; margin-bottom: 50px;">
+            <p class="hero-subtitle">ADMINISTRATION</p>
+            <h2 class="hero-title" style="font-size: 3rem;">Bénéfices</h2>
+        </header>
+
+        <div style="max-width:1000px; margin: 0 auto; background: rgba(197,160,89,0.02); padding: 40px; border: 1px solid rgba(197,160,89,0.1); backdrop-filter: blur(10px);">
+            <table class="compta-table">
+                <thead>
+                    <tr>
+                        <th>Période (Ven. au Ven.)</th>
+                        <th style="text-align: center;">Capital Brut</th>
+                        <th style="text-align: right;">Bénéfice Net</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>20/02 au 27/02</td>
+                        <td style="text-align: center; color: var(--gold-light);">60000 $</td>
+                        <td style="text-align: right; color: #4CAF50; font-weight: bold;"> 	-30000 $</td>
+                    </tr>
+                    <tr>
+                        <td>27/02 au 06/03</td>
+                        <td style="text-align: center; color: var(--gold-light);">--</td>
+                        <td style="text-align: right; color: #888;">À venir</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr style="background: rgba(197,160,89,0.08);">
+                        <td style="padding: 20px; font-family: 'Cinzel Decorative'; color: var(--gold);">CUMUL TOTAL</td>
+                        <td style="padding: 20px; text-align: center; font-weight: bold;">0 $</td>
+                        <td style="padding: 20px; text-align: right; font-weight: bold; color: #4CAF50;">0 $</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <p style="text-align: center; color: #444; font-size: 0.6rem; margin-top: 40px; letter-spacing: 2px;">DOCUMENT CONFIDENTIEL MARLOWE VIGNYARD</p>
+    </div>
+</div>
+
+<div id="auth-overlay">
+    <div class="auth-card">
+        <h2 style="font-family:'Cinzel Decorative'; color:var(--gold); margin:0; letter-spacing: 3px;">ACCÈS RÉSERVÉ</h2>
+        <p style="font-size:0.6rem; letter-spacing:2px; opacity:0.5; margin-top:10px;">SAISISSEZ LE CODE D'ACCÈS</p>
+        <input type="password" id="pass-input" class="auth-input" placeholder="••••••••">
+        <button class="btn-ajouter" onclick="verifyPass()">VALIDER</button>
+        <p onclick="closeAuth()" style="margin-top:20px; font-size:0.6rem; cursor:pointer; opacity:0.4; text-transform: uppercase;">Retour au site</p>
+    </div>
+</div>
+
+<button id="panier-trigger" onclick="togglePanier(true)">
+    PANIER <span class="badge" id="panier-count">0</span>
+</button>
+
+<div id="modal-panier">
+    <div class="modal-inner">
+        <h2 style="font-family:'Cinzel Decorative'; text-align:center; color:var(--gold); margin-bottom:30px; letter-spacing:3px;">PANIER</h2>
+        <div id="panier-list" style="margin-bottom:30px; max-height:300px; overflow-y:auto; padding-right:10px;"></div>
+        <div id="panier-total" style="text-align:right; font-size:1.8rem; font-family:'Cinzel Decorative'; border-top:1px solid #222; padding-top:20px; margin-bottom:30px; color:var(--gold-light);"></div>
+        
+        <form action="https://formspree.io/f/xreaonyl" method="POST">
+            <input type="text" name="Nom" style="width:100%; background:none; border:1px solid #222; color:white; padding:15px; margin-bottom:10px; outline:none;" placeholder="NOM" required>
+            <input type="tel" name="Tel" style="width:100%; background:none; border:1px solid #222; color:white; padding:15px; margin-bottom:30px; outline:none;" placeholder="TÉLÉPHONE" required>
+            <input type="hidden" name="Commande" id="h-cmd">
+            <input type="hidden" name="Total" id="h-total">
+            <button type="submit" class="btn-ajouter">VALIDER LA COMMANDE</button>
+            <p onclick="togglePanier(false)" style="text-align:center; margin-top:20px; color:#444; cursor:pointer; font-size:0.6rem; text-transform:uppercase; letter-spacing:2px;">Continuer les achats</p>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentNavLink = null;
+
+    // NAVIGATION
+    function showPage(pId, link) {
+        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.getElementById('section-' + pId).classList.add('active');
+        if(link) link.classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    // AUTHENTIFICATION
+    function checkAuth(link) {
+        currentNavLink = link;
+        document.getElementById('auth-overlay').style.display = 'flex';
+        document.getElementById('pass-input').focus();
+    }
+
+    function closeAuth() {
+        document.getElementById('auth-overlay').style.display = 'none';
+        document.getElementById('pass-input').value = "";
+    }
+
+    function verifyPass() {
+        const pass = document.getElementById('pass-input').value;
+        const correctPass = "CAVE2024"; // <--- CHANGE LE MOT DE PASSE ICI
+        
+        if(pass === correctPass) {
+            document.getElementById('auth-overlay').style.display = 'none';
+            showPage('benefice', currentNavLink);
+        } else {
+            alert("Accès refusé. Code incorrect.");
+            document.getElementById('pass-input').value = "";
+        }
+    }
+
+    // CANVAS FOND
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function init() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        particles = Array.from({length: 50}, () => ({
+            x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+            s: Math.random() * 1.5, vx: Math.random() * 0.4 - 0.2, vy: Math.random() * 0.4 - 0.2
+        }));
+    }
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "rgba(197, 160, 89, 0.3)";
+        particles.forEach(p => {
+            p.x += p.vx; p.y += p.vy;
+            if(p.x < 0 || p.x > canvas.width) p.vx *= -1; if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
+        });
+        requestAnimationFrame(draw);
+    }
+
+    // CURSEUR
+    window.addEventListener('mousemove', e => {
+        document.getElementById('cursor').style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        document.getElementById('cursor-ring').style.transform = `translate(${e.clientX - 17}px, ${e.clientY - 17}px)`;
+    });
+
+    // PRODUITS
+    const products = [
+        { id: 0, cat: 'fraiches', name: "Orange Sanguine", price: 7 },
+        { id: 1, cat: 'fraiches', name: "Bière du Domaine", price: 12 },
+        { id: 2, cat: 'rouge', name: "Grenacha Royale", price: 25 },
+        { id: 3, cat: 'rouge', name: "Merlot Privé", price: 40 },
+        { id: 4, cat: 'rouge', name: "Cabernet Imperial", price: 50 },
+        { id: 5, cat: 'rouge', name: "Pinot Noir Grand Cru", price: 55 },
+        { id: 6, cat: 'rouge', name: "Bordelais Millésime", price: 60 },
+        { id: 7, cat: 'rouge', name: "Côte du Rhône", price: 65 },
+        { id: 8, cat: 'blanc', name: "Chardonnay d'Exception", price: 30 },
+        { id: 9, cat: 'blanc', name: "Sauvignon Blanc", price: 35 },
+        { id: 10, cat: 'blanc', name: "Blanc du Vignoble", price: 100 },
+        { id: 11, cat: 'champagne', name: "Éclat d'Or 1988", price: 1000 }
+    ];
+    let panier = {};
+
+    function render(cat) {
+        document.getElementById('main-grid').innerHTML = products.filter(p => p.cat === cat).map(p => `
+            <div class="produit-card">
+                <h3 style="font-family:'Cinzel Decorative'; margin-bottom:10px;">${p.name}</h3>
+                <div style="font-size:1.6rem; color:var(--gold-light); margin-bottom:25px;">${p.price} $</div>
+                <div class="qty-selector">
+                    <button class="btn-qty" onclick="this.nextElementSibling.stepDown()">−</button>
+                    <input type="number" id="qty-${p.id}" class="qty-input" value="1" min="1">
+                    <button class="btn-qty" onclick="this.previousElementSibling.stepUp()">+</button>
+                </div>
+                <button class="btn-ajouter" onclick="ajouter(${p.id}, event)">AJOUTER AU PANIER</button>
+            </div>
+        `).join('');
+    }
+
+    function filter(cat, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active'); render(cat);
+    }
+
+    function ajouter(id, event) {
+        const p = products.find(i => i.id === id);
+        const q = parseInt(document.getElementById(`qty-${id}`).value);
+        const trigger = document.getElementById('panier-trigger');
+        trigger.style.display = 'flex';
+        
+        const startRect = event.target.getBoundingClientRect();
+        const endRect = trigger.getBoundingClientRect();
+        const spark = document.createElement('div');
+        spark.className = 'fly-spark';
+        spark.style.left = startRect.left + (startRect.width/2) + 'px';
+        spark.style.top = startRect.top + 'px';
+        document.body.appendChild(spark);
+        
+        spark.animate([
+            { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+            { transform: `translate(${endRect.left - startRect.left}px, ${endRect.top - startRect.top}px) scale(0.1)`, opacity: 0 }
+        ], { duration: 700 }).onfinish = () => {
+            spark.remove();
+            if(!panier[p.name]) panier[p.name] = { price: p.price, qty: 0 };
+            panier[p.name].qty += q;
+            updatePanier();
+        };
+    }
+
+    function updatePanier() {
+        let total = 0, count = 0, html = "", cmd = "";
+        for(let n in panier) {
+            total += panier[n].price * panier[n].qty;
+            count += panier[n].qty;
+            html += `<div class="item-row">
+                <div class="item-name">${n}</div>
+                <div style="display:flex; align-items:center;">
+                    <span style="min-width:60px; text-align:right;">${panier[n].qty} x ${panier[n].price}$</span>
+                </div>
+            </div>`;
+            cmd += `${n} x${panier[n].qty} | `;
+        }
+        document.getElementById('panier-list').innerHTML = html;
+        document.getElementById('panier-total').innerText = total + " $";
+        document.getElementById('panier-count').innerText = count;
+        document.getElementById('h-total').value = total + " $";
+        document.getElementById('h-cmd').value = cmd;
+    }
+
+    function togglePanier(s) { document.getElementById('modal-panier').style.display = s ? 'flex' : 'none'; }
+
+    // INITIALISATION
+    init(); draw(); render('fraiches');
+    window.onresize = init;
+</script>
+</body>
+</html>
